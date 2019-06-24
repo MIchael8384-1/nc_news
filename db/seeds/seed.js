@@ -18,9 +18,15 @@ exports.seed = function(knex, Promise) {
         .returning("*");
     })
     .then(() => {
-      //nconsole.log(userData);
+      //console.log(userData);
       return knex("users")
         .insert(userData)
+        .returning("*");
+    })
+    .then(() => {
+      console.log(articleData);
+      return knex("articles")
+        .insert(articleData)
         .returning("*");
     });
   //const topicsInsertions = knex("topics").insert(topicData);
