@@ -24,11 +24,13 @@ exports.seed = function(knex, Promise) {
         .returning("*");
     })
     .then(() => {
-      console.log(articleData);
+      //console.log(articleData);
+      const articleInfo = formatDate(articleData);
       return knex("articles")
-        .insert(articleData)
+        .insert(articleInfo)
         .returning("*");
     });
+
   //const topicsInsertions = knex("topics").insert(topicData);
   // const usersInsertions = knex("users").insert(userData);
   // return Promise.all([topicsInsertions, usersInsertions])
