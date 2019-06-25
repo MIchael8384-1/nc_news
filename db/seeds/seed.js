@@ -5,7 +5,12 @@ const {
   userData
 } = require("../index.js");
 
-const { formatDate, formatComments, makeRefObj } = require("../utils/utils");
+const {
+  formatDate,
+  formatComments,
+  makeRefObj,
+  renameKeys
+} = require("../utils/utils");
 
 exports.seed = function(knex, Promise) {
   return knex.migrate
@@ -28,6 +33,23 @@ exports.seed = function(knex, Promise) {
       const articleInfo = formatDate(articleData);
       return knex("articles")
         .insert(articleInfo)
+        .returning("*");
+    })
+    .then(articleData => {
+      // const keyTitle = "title";
+      // const keyArticleId = "article_id";
+
+      const commentsDateFormatted = formatDate(commentData);
+      const lookUpObject = makeRefObj(articleData, "title", "article_id");
+
+      const renameCommentsKeys = renameKeys(commentsDateFormatted);
+      const commentsValueChange = formatComments(
+        renameCommentsKeys,
+        lookUpObject
+      );
+
+      return knex("comments")
+        .insert(commentsValueChange)
         .returning("*");
     });
 
