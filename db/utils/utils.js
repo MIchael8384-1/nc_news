@@ -25,16 +25,17 @@ exports.renameKeys = input => {
 
 exports.formatComments = (comments, articleRef) => {
   return comments.map(comment => {
-    const result = {};
-    Object.keys(comment).forEach(key => {
-      const value = comment[key];
-      if (key === "belongs_to") {
-        result["article_id"] = articleRef[comment.belongs_to];
-      } else {
-        result[key] = value;
-      }
-    });
-    console.log(result);
+    const result = { ...comment };
+    result.article_id = articleRef[result.article_id];
+    // Object.keys(comment).forEach(key => {
+    //   const value = comment[key];
+    //   if (key === "belongs_to") {
+    //     result["article_id"] = articleRef[comment.belongs_to];
+    //   } else {
+    //     result[key] = value;
+    //   }
+    // });\
+    //console.log(result);
     return result;
   });
 };
