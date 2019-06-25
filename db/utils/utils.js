@@ -36,6 +36,7 @@ exports.formatComments = (comments, articleRef) => {
     //   }
     // });\
     //console.log(result);
+
     return result;
   });
 };

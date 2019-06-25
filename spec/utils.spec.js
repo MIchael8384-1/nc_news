@@ -235,7 +235,7 @@ describe("renameKeys", () => {
   });
 });
 
-describe.only("formatComments", () => {
+describe("formatComments", () => {
   it("should return an empty array when given an empty array", () => {
     const input = [];
     const actual = formatComments(input);
@@ -247,8 +247,8 @@ describe.only("formatComments", () => {
       {
         body:
           "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
-        belongs_to: "They're not exactly dogs, are they?",
-        created_by: "butter_bridge",
+        article_id: "They're not exactly dogs, are they?",
+        author: "butter_bridge",
         votes: 16,
         created_at: 1511354163389
       }
@@ -260,7 +260,7 @@ describe.only("formatComments", () => {
         body:
           "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
         article_id: 1,
-        created_by: "butter_bridge",
+        author: "butter_bridge",
         votes: 16,
         created_at: 1511354163389
       }
@@ -272,7 +272,7 @@ describe.only("formatComments", () => {
       {
         body:
           "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
-        belongs_to: "They're not exactly dogs, are they?",
+        article_id: "They're not exactly dogs, are they?",
         created_by: "butter_bridge",
         votes: 16,
         created_at: 1511354163389
@@ -280,7 +280,7 @@ describe.only("formatComments", () => {
       {
         body:
           "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.",
-        belongs_to: "Living in the shadow of a great man",
+        article_id: "Living in the shadow of a great man",
         created_by: "butter_bridge",
         votes: 14,
         created_at: 1479818163389
