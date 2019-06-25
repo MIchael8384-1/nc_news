@@ -1,5 +1,10 @@
 const { expect } = require("chai");
-const { formatDate, makeRefObj, formatComments } = require("../db/utils/utils");
+const {
+  formatDate,
+  makeRefObj,
+  formatComments,
+  renameKeys
+} = require("../db/utils/utils");
 
 describe("formatDate", () => {
   it("returns an empty object when given an empty array", () => {
@@ -100,7 +105,7 @@ describe("formatDate", () => {
   });
 });
 
-describe.only("makeRefObj", () => {
+describe("makeRefObj", () => {
   it("return an empty object when given an array", () => {
     const input = [];
     const actual = makeRefObj(input);
@@ -154,4 +159,156 @@ describe.only("makeRefObj", () => {
   });
 });
 
-describe("formatComments", () => {});
+describe("renameKeys", () => {
+  it("should return an array when given an array", () => {
+    const input = [];
+    const actual = renameKeys(input);
+    const expected = [];
+    expect(actual).to.eql(expected);
+  });
+  it("should return an array of objects with the keys of both created_by and belongs_to when given a single object", () => {
+    const input = [
+      {
+        body:
+          "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+        belongs_to: "They're not exactly dogs, are they?",
+        created_by: "butter_bridge",
+        votes: 16,
+        created_at: 1511354163389
+      }
+    ];
+    // const keyChange1 = "belongs_to";
+    // const newKey1 = "article_id";
+
+    const actual = renameKeys(input);
+    const expected = [
+      {
+        body:
+          "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+        article_id: "They're not exactly dogs, are they?",
+        author: "butter_bridge",
+        votes: 16,
+        created_at: 1511354163389
+      }
+    ];
+    expect(actual).to.eql(expected);
+  });
+  it("should return an array with multiple objects with specified keys changed when given an array of objects", () => {
+    const input = [
+      {
+        body:
+          "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+        belongs_to: "They're not exactly dogs, are they?",
+        created_by: "butter_bridge",
+        votes: 16,
+        created_at: 1511354163389
+      },
+      {
+        body:
+          "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.",
+        belongs_to: "Living in the shadow of a great man",
+        created_by: "butter_bridge",
+        votes: 14,
+        created_at: 1479818163389
+      }
+    ];
+    const actual = renameKeys(input);
+    const expected = [
+      {
+        body:
+          "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+        article_id: "They're not exactly dogs, are they?",
+        author: "butter_bridge",
+        votes: 16,
+        created_at: 1511354163389
+      },
+      {
+        body:
+          "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.",
+        article_id: "Living in the shadow of a great man",
+        author: "butter_bridge",
+        votes: 14,
+        created_at: 1479818163389
+      }
+    ];
+    expect(actual).to.eql(expected);
+  });
+});
+
+describe.only("formatComments", () => {
+  it("should return an empty array when given an empty array", () => {
+    const input = [];
+    const actual = formatComments(input);
+    const expected = [];
+    expect(actual).to.eql(expected);
+  });
+  it("should return an array with a single object with the value of article_id update", () => {
+    const input = [
+      {
+        body:
+          "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+        belongs_to: "They're not exactly dogs, are they?",
+        created_by: "butter_bridge",
+        votes: 16,
+        created_at: 1511354163389
+      }
+    ];
+    const articleRef = { "They're not exactly dogs, are they?": 1 };
+    const actual = formatComments(input, articleRef);
+    const expected = [
+      {
+        body:
+          "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+        article_id: 1,
+        created_by: "butter_bridge",
+        votes: 16,
+        created_at: 1511354163389
+      }
+    ];
+    expect(actual).to.eql(expected);
+  });
+  it("should return an array with a multiple objects with the value of article_id update return a new array", () => {
+    const input = [
+      {
+        body:
+          "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+        belongs_to: "They're not exactly dogs, are they?",
+        created_by: "butter_bridge",
+        votes: 16,
+        created_at: 1511354163389
+      },
+      {
+        body:
+          "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.",
+        belongs_to: "Living in the shadow of a great man",
+        created_by: "butter_bridge",
+        votes: 14,
+        created_at: 1479818163389
+      }
+    ];
+    const articleRef = {
+      "They're not exactly dogs, are they?": 1,
+      "Living in the shadow of a great man": 2
+    };
+    const actual = formatComments(input, articleRef);
+    const expected = [
+      {
+        body:
+          "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+        article_id: 1,
+        created_by: "butter_bridge",
+        votes: 16,
+        created_at: 1511354163389
+      },
+      {
+        body:
+          "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.",
+        article_id: 2,
+        created_by: "butter_bridge",
+        votes: 14,
+        created_at: 1479818163389
+      }
+    ];
+    expect(actual).to.eql(expected);
+  });
+});
