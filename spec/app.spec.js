@@ -45,9 +45,45 @@ describe.only("/api", () => {
       });
     });
   });
-  describe("/article", () => {
-    it("GET 200, Responds with all articles", () => {
-      return request(app).get;
+  // describe("/articles", () => {
+  //   it("GET 200, Responds with all articles", () => {
+  //     return request(app)
+  //       .get("/api/articles")
+  //       .expect(200)
+  //       .then(res => {
+  //         expect(res.body.articles).to.be.an("array");
+  //       });
+  //   });
+  // });
+  describe("/:article_id", () => {
+    it("GET 200, responds with the requested article using article_id", () => {
+      return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then(res => {
+          expect(res.body.article[0]).to.contain.keys(
+            "article_id",
+            "title",
+            "topic",
+            "author",
+            "body",
+            "created_at",
+            "votes",
+            "comments_count"
+          );
+          expect(res.body.article[0].article_id).to.equal(1);
+        });
+    });
+    describe("/comments", () => {
+      it("GET 200, respond with an array of comments when given an article_id", () => {
+        return request(app)
+          .get("/api/articles/2/comments")
+          .expect(200)
+          .then(res => {
+            console.log(res.body);
+            expect(res.body.article[0]).to.be.an("array");
+          });
+      });
     });
   });
 });
