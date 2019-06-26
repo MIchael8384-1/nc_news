@@ -3,8 +3,8 @@ const { fetchTopics } = require("../models/topics");
 exports.getTopics = (req, res, next) => {
   fetchTopics()
     .then(topics => {
-      console.log(topics);
-      res.status(200).send({ topics });
+      res.status(200).send({ topics});
+      console.log(send);
     })
     .catch(next);
 };

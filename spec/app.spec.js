@@ -8,7 +8,7 @@ const chaiSorted = require("chai-sorted");
 
 //chai.use(chaiSorted);
 
-describe.only("/api", () => {
+describe("/api", () => {
   after(() => connection.destroy());
   beforeEach(() => connection.seed.run());
   describe("/topics", () => {
@@ -20,6 +20,15 @@ describe.only("/api", () => {
           expect(res.body.topics).to.be.an("array");
           expect(res.body.topics[0]).to.contain.keys("slug", "description");
         });
+    });
+  });
+  describe.only("/users", () => {
+    describe("/:username", () => {
+      it("GET status 200; Will respond with an array with the requested users details", () => {
+        return request(app)
+          .get("/api/users")
+          .expect(200);
+      });
     });
   });
 });

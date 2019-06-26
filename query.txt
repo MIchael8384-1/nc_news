@@ -1,0 +1,5 @@
+You are now connected to database "nc_news" as user "michael".
+ username | avatar_url | name 
+----------+------------+------
+(0 rows)
+
