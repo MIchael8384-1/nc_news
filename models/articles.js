@@ -10,18 +10,16 @@ exports.fetchArticleById = article_id => {
     .groupBy("articles.article_id");
 };
 
-exports.fetchArticleComments = article_id => {
+exports.fetchArticleComments = (
+  article_id,
+  sort_by = "created_at",
+  order = "DESC"
+) => {
   return connection
-    .select(
-      "comment_id",
-      "comments.votes",
-      "comments.created_at",
-      "comments.author",
-      "comments.body"
-    )
-    .from("articles")
-    .where({ "articles.article_id": article_id })
-    .leftJoin("comments", "articles.article_id", "comments.article_id");
+    .select("*")
+    .from("comments")
+    .where({ article_id })
+    .orderBy(sort_by, order);
 };
 
 /*
