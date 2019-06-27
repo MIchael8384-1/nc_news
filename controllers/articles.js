@@ -15,10 +15,10 @@ exports.getArticleById = (req, res, next) => {
 exports.getArticleComments = (req, res, next) => {
   const { article_id } = req.params;
   fetchArticleComments(article_id)
-    .then(article => {
-      res.status(200).send({ article });
+    .then(comments => {
+      res.status(200).send({ comments });
     })
     .catch(next);
 };
 
-// change all to articles when requiring all
+// change all to commentss when requiring all
