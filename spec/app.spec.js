@@ -8,7 +8,7 @@ const chaiSorted = require("chai-sorted");
 
 //chai.use(chaiSorted);
 
-describe.only("/api", () => {
+describe("/api", () => {
   after(() => connection.destroy());
   beforeEach(() => connection.seed.run());
   describe("/topics", () => {
@@ -75,15 +75,43 @@ describe.only("/api", () => {
         });
     });
     describe("/comments", () => {
-      it("GET 200, respond with an array of comments when given an article_id", () => {
+      it("GET Status 200, respond with an array of comments when given an article_id", () => {
         return request(app)
-          .get("/api/articles/2/comments")
+          .get("/api/articles/1/comments")
           .expect(200)
           .then(res => {
-            console.log(res.body);
-            expect(res.body.article[0]).to.be.an("array");
+            console.log(res.body.comments);
+            // console.log(res.body.comments[2]);
+            expect(res.body.comments).to.be.an("array");
+            expect(res.body.comments[0].article_id).to.equal(1);
           });
       });
+      it("GET Status 200, array of comments sorted in descending order by created_at  ", () => {
+        return request(app)
+          .get("/api/articles/1/comments")
+          .expect(200)
+          .then(res => {
+            expect(
+              res.body.comments[1].created_at >= res.body.comments[2].created_at
+            ).to.be.true;
+          });
+      });
+    });
+  });
+  describe("/comments", () => {
+    describe("/:comment_id", () => {});
+    it("DELETE status 204, when provided a valid id", () => {
+      return request(app)
+        .delete("/api/comments/1")
+        .expect(204);
+    });
+    it("DELETE status 404, when provided a valid id number but id does not exist ", () => {
+      return request(app)
+        .delete("/api/comments/999")
+        .expect(404)
+        .then(res => {
+          expect(res.body.msg).to.equal("Comment_Id 999 can not be found");
+        });
     });
   });
 });
