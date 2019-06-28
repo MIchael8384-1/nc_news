@@ -34,6 +34,7 @@ describe("/api", () => {
         .delete("/api/topics")
         .expect(405)
         .then(res => {
+          console.log(res.body.msg);
           expect(res.body.msg).to.equal("Method is not allowed");
         });
     });
@@ -70,13 +71,12 @@ describe("/api", () => {
     });
   });
 
-  describe("/articles", () => {
+  describe.only("/articles", () => {
     it("GET 200, responds with an array of articles", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
         .then(res => {
-          // console.log(res.body);
           expect(res.body.articles).to.be.an("array");
           expect(res.body.articles[1]).to.contain.keys(
             "author",
@@ -94,13 +94,18 @@ describe("/api", () => {
         .get("/api/articles?sort_by=author")
         .expect(200)
         .then(res => {
-          // console.log(res.body.articles);
           expect(res.body.articles).to.be.sorted("author");
         });
     });
-    // it("GET 200 status, will be be sorted with client query ascending ", () => {
-    //   return request(app).get("/api/articles?sort_by=asc");
-    // });
+    it("GET 200 status, will be be sorted with client query ascending ", () => {
+      return request(app)
+        .get("/api/articles?order=asc")
+        .expect(200)
+        .then(res => {
+          expect(res.body.articles[1].created_at < res.body.articles[2]).to.be
+            .true;
+        });
+    });
     it("GET 200 status, responds with an array of articles in descending and sort_by date as default", () => {
       return request(app)
         .get("/api/articles")
@@ -127,7 +132,16 @@ describe("/api", () => {
           expect(res.body.articles[0].topic).to.equal("mitch");
         });
     });
-    // it("GET status 200, will be sort by q", () => {});
+
+    it("PUT/DELETE 405, will respond with an invalid method message", () => {
+      return request(app)
+        .delete("/api/articles")
+        .expect(405)
+        .then(res => {
+          expect(res.body.msg).to.equal("Method is not allowed");
+        });
+    });
+
     describe("/:article_id", () => {
       it("GET 200, responds with the requested article using article_id", () => {
         return request(app)
