@@ -13,19 +13,13 @@ describe("/api", () => {
   beforeEach(() => connection.seed.run());
   it("GET status 405, method not allowed", () => {
     return request(app)
+      .get("/api")
       .expect(405)
       .then(res => {
-        expect(res.body).to.equal("Method is not allowed");
+        expect(res.body.msg).to.equal("Method is not allowed");
       });
   });
   describe("/topics", () => {
-    it("GET status 405, method not allowed", () => {
-      return request(app)
-        .expect(405)
-        .then(res => {
-          expect(res.body).to.equal("Method is not allowed");
-        });
-    });
     it("GET status 200; Will respond with an array of all topics with the correct properties ", () => {
       return request(app)
         .get("/api/topics")
