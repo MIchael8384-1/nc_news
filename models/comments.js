@@ -8,10 +8,8 @@ exports.removeCommentById = comment_id => {
     .then(deleteCount => {
       if (!deleteCount) {
         return Promise.reject({
-          status: 404,
-          msg: `Comment_Id ${comment_id} can not be found`
+          code: 404
         });
       }
-      return true;
     });
 };
