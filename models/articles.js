@@ -1,6 +1,6 @@
 const connection = require("../db/connection");
 
-exports.fetchArticles = (sort_by = "created_at", order = "DESC") => {
+exports.fetchArticles = ({ sort_by, author, topic }) => {
   return connection
     .select(
       "articles.author",
@@ -14,8 +14,18 @@ exports.fetchArticles = (sort_by = "created_at", order = "DESC") => {
     .count({ comments_count: "comment_id" })
     .leftJoin("comments", "articles.article_id", "comments.article_id")
     .groupBy("articles.article_id")
-    .orderBy(sort_by, order);
-  //.modify((query) => {});
+    .orderBy(sort_by || "created_at", "desc")
+    .modify(query => {
+      if (author) {
+        query.where("articles.author", author);
+      }
+      if (topic) {
+        query.where("articles.topic", topic);
+      }
+    });
+  //     .returning("*")
+  // );
+  // set up query
 };
 
 exports.fetchArticleById = article_id => {
@@ -25,7 +35,16 @@ exports.fetchArticleById = article_id => {
     .where({ "articles.article_id": article_id })
     .count({ comments_count: "comment_id" })
     .leftJoin("comments", "articles.article_id", "comments.article_id")
-    .groupBy("articles.article_id");
+    .groupBy("articles.article_id")
+    .returning("*");
+  // .then(({ rows: [article] }) => {
+  //   if (!article) {
+  //     return Promise.reject({
+  //       status: 404,
+  //       msg: `No user found for user_id: ${article_id}`
+  //     });
+  //   }
+  // });
 };
 
 exports.fetchArticleComments = (
@@ -37,5 +56,16 @@ exports.fetchArticleComments = (
     .select("*")
     .from("comments")
     .where({ article_id })
-    .orderBy(sort_by, order);
+    .orderBy(sort_by, order)
+    .returning("*");
 };
+
+// exports.checkExists = article_id => {
+//   return connection
+//     .select("*")
+//     .from("articles")
+//     .where({ article_id })
+//     .then((row) => {
+//       return
+//     });
+// };
