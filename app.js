@@ -10,8 +10,26 @@ app.use(express.json());
 app.use("/api", apiRouter);
 
 app.use((err, req, res, next) => {
-  console.log(err);
-  if (err.status) return res.status(err.status).send({ msg: err.msg });
+  const sqlErrorCodes = { "22P02": "Invalid User ID" };
+
+  if (sqlErrorCodes[err.code]) {
+    res.status(400).send({ msg: sqlErrorCodes[err.code] });
+  }
+  next(err);
 });
 
+app.use((err, req, res, next) => {
+  res.status(500).send({ msg: "You have an Internal server " });
+});
+
+// app.use((err, req, res, next) => {
+// if (err.code) {
+//   if (err.code === "2P502") {
+//     return res.status(404).send({ msg: "resource not found" });
+//   }
+//}
+//   console.log(err);
+//   if (err.status) return res.status(err.status).send({ msg: err.msg });
+// });
+app.all("/*", (req, res, next) => res.status(400).send("Route not found"));
 module.exports = app;
