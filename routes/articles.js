@@ -5,8 +5,20 @@ const {
   getArticleComments
 } = require("../controllers/articles");
 
-articlesRouter.route("/").get(getArticles);
-articlesRouter.route("/:article_id").get(getArticleById);
+articlesRouter
+  .route("/")
+  .get(getArticles)
+  .all((req, res) => {
+    res.status(405).send({ msg: "Method is not allowed" });
+  });
+
+articlesRouter
+  .route("/:article_id")
+  .get(getArticleById)
+  .all((req, res) => {
+    res.status(405).send({ msg: "Method is not allowed" });
+  });
+
 articlesRouter
   .route("/:article_id/comments")
   .get(getArticleComments)
