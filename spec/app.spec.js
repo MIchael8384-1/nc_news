@@ -29,6 +29,14 @@ describe("/api", () => {
           expect(res.body.topics[0]).to.contain.keys("slug", "description");
         });
     });
+    it("PUT/DELETE status 405, Will respond with an Invalid method message ", () => {
+      return request(app)
+        .delete("/api/topics")
+        .expect(405)
+        .then(res => {
+          expect(res.body.msg).to.equal("Method is not allowed");
+        });
+    });
   });
   describe("/users", () => {
     describe("/:username", () => {
