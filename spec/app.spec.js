@@ -11,7 +11,21 @@ chai.use(chaiSorted);
 describe("/api", () => {
   after(() => connection.destroy());
   beforeEach(() => connection.seed.run());
+  it("GET status 405, method not allowed", () => {
+    return request(app)
+      .expect(405)
+      .then(res => {
+        expect(res.body).to.equal("Method is not allowed");
+      });
+  });
   describe("/topics", () => {
+    it("GET status 405, method not allowed", () => {
+      return request(app)
+        .expect(405)
+        .then(res => {
+          expect(res.body).to.equal("Method is not allowed");
+        });
+    });
     it("GET status 200; Will respond with an array of all topics with the correct properties ", () => {
       return request(app)
         .get("/api/topics")
@@ -22,7 +36,7 @@ describe("/api", () => {
         });
     });
   });
-  describe.only("/users", () => {
+  describe("/users", () => {
     describe("/:username", () => {
       it("GET 200; responds with a single item object when passed a param", () => {
         return request(app)
@@ -48,7 +62,7 @@ describe("/api", () => {
           .get("/api/users/notAName")
           .expect(404)
           .then(res => {
-            expect(res.msg).to.equal("Username not found");
+            expect(res.body.msg).to.equal("Not Found");
           });
       });
     });
@@ -118,7 +132,8 @@ describe("/api", () => {
           .get("/api/articles/1")
           .expect(200)
           .then(res => {
-            expect(res.body.article[0]).to.contain.keys(
+            console.log(res.body);
+            expect(res.body.article).to.contain.keys(
               "article_id",
               "title",
               "topic",
@@ -128,7 +143,7 @@ describe("/api", () => {
               "votes",
               "comments_count"
             );
-            expect(res.body.article[0].article_id).to.equal(1);
+            expect(res.body.article.article_id).to.equal(1);
           });
       });
 
@@ -137,17 +152,18 @@ describe("/api", () => {
           .get("/api/articles/notAnId")
           .expect(400)
           .then(res => {
+            console.log(res.body);
             expect(res.body.msg).to.equal("Invalid User ID");
           });
       });
-      // it("GET for no existent article - status 404 item not found", () => {
-      //   return request(app)
-      //     .get("/api/articles/9999")
-      //     .expect(404)
-      //     .then(res => {
-      //       expect(res.body.msg).to.equal("Article ID not found");
-      //     });
-      // });
+      it("GET for no existent article - status 404 item not found", () => {
+        return request(app)
+          .get("/api/articles/9999")
+          .expect(404)
+          .then(res => {
+            expect(res.body.msg).to.equal("Not Found");
+          });
+      });
 
       describe("/comments", () => {
         it("GET Status 200, respond with an array of comments when given an article_id", () => {
@@ -188,7 +204,7 @@ describe("/api", () => {
         .delete("/api/comments/999")
         .expect(404)
         .then(res => {
-          expect(res.body.msg).to.equal("Comment_Id 999 can not be found");
+          expect(res.body.msg).to.equal("Not Found");
         });
     });
   });
