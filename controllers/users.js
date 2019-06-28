@@ -1,4 +1,4 @@
-const { fetchUserByUsername, checkExists } = require("../models/users");
+const { fetchUserByUsername } = require("../models/users");
 
 exports.getUserByUsername = (req, res, next) => {
   const { username } = req.params;
