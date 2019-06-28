@@ -36,15 +36,15 @@ exports.fetchArticleById = article_id => {
     .count({ comments_count: "comment_id" })
     .leftJoin("comments", "articles.article_id", "comments.article_id")
     .groupBy("articles.article_id")
-    .returning("*");
-  // .then(({ rows: [article] }) => {
-  //   if (!article) {
-  //     return Promise.reject({
-  //       status: 404,
-  //       msg: `No user found for user_id: ${article_id}`
-  //     });
-  //   }
-  // });
+
+    .then(([article]) => {
+      if (!article) {
+        return Promise.reject({
+          code: 404
+        });
+      }
+      return article;
+    });
 };
 
 exports.fetchArticleComments = (
