@@ -60,3 +60,15 @@ exports.fetchArticleComments = (
     .orderBy(sort_by, order)
     .returning("*");
 };
+
+exports.updateArticleVotes = (article_id, inc_votes) => {
+  return connection
+    .from("articles")
+    .where({ article_id })
+    .increment("votes", inc_votes)
+    .returning("*");
+  // .then(article => {
+  //   console.log(article);
+  //   return article;
+  // });
+};

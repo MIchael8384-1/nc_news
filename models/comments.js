@@ -18,5 +18,13 @@ exports.addComment = ({ author, body, article_id }) => {
   return connection
     .into("comments")
     .insert({ author, body, article_id })
-    .returning("author", "body");
+    .returning("*");
+};
+
+exports.updateCommentsVote = (comment_id, inc_votes) => {
+  return connection
+    .from("comments")
+    .where({ comment_id })
+    .increment("votes", inc_votes)
+    .returning("*");
 };

@@ -71,7 +71,7 @@ describe("/api", () => {
     });
   });
 
-  describe.only("/articles", () => {
+  describe("/articles", () => {
     it("GET 200, responds with an array of articles", () => {
       return request(app)
         .get("/api/articles")
@@ -177,8 +177,8 @@ describe("/api", () => {
           .send(newComment)
           .expect(201)
           .then(res => {
-            console.log(res);
-            expect(res.body.comment.author).to.equal("butter_bridge");
+            expect(res.body.comment[0].author).to.equal("butter_bridge");
+            expect(res.body.comment[0].comment_id).to.equal(19);
           });
       });
 
@@ -197,6 +197,26 @@ describe("/api", () => {
           .expect(404)
           .then(res => {
             expect(res.body.msg).to.equal("Not Found");
+          });
+      });
+      it("PATCH 200, add required votes and update", () => {
+        const vote = 1;
+        return request(app)
+          .patch("/api/articles/1")
+          .send({ inc_votes: vote })
+          .expect(200)
+          .then(res => {
+            expect(res.body.article[0].votes).to.equal(101);
+          });
+      });
+      it("PATCH 200, decrements the current article vote count ", () => {
+        const vote = -100;
+        return request(app)
+          .patch("/api/articles/1")
+          .send({ inc_votes: vote })
+          .expect(200)
+          .then(res => {
+            expect(res.body.article[0].votes).to.equal(0);
           });
       });
 
@@ -240,6 +260,17 @@ describe("/api", () => {
         .expect(404)
         .then(res => {
           expect(res.body.msg).to.equal("Not Found");
+        });
+    });
+    it("PATCH 200, add required votes and update", () => {
+      const vote = 1;
+      return request(app)
+        .patch("/api/comments/1")
+        .send({ inc_votes: vote })
+        .expect(200)
+        .then(res => {
+          console.log(res.body);
+          expect(res.body.comment[0].votes).to.equal(17);
         });
     });
   });

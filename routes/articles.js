@@ -2,7 +2,8 @@ const articlesRouter = require("express").Router();
 const {
   getArticles,
   getArticleById,
-  getArticleComments
+  getArticleComments,
+  patchArticleById
 } = require("../controllers/articles");
 const { insertNewComment } = require("../controllers/comments");
 
@@ -16,6 +17,7 @@ articlesRouter
 articlesRouter
   .route("/:article_id")
   .get(getArticleById)
+  .patch(patchArticleById)
   .all((req, res) => {
     res.status(405).send({ msg: "Method is not allowed" });
   });
