@@ -22,10 +22,11 @@ exports.fetchArticles = ({ sort_by, author, topic, order }) => {
       if (topic) {
         query.where("articles.topic", topic);
       }
+    })
+    .then(article => {
+      if (!article) return Promise.reject({});
+      return article;
     });
-  //     .returning("*")
-  // );
-  // set up query
 };
 
 exports.fetchArticleById = article_id => {
@@ -59,13 +60,3 @@ exports.fetchArticleComments = (
     .orderBy(sort_by, order)
     .returning("*");
 };
-
-// exports.checkExists = article_id => {
-//   return connection
-//     .select("*")
-//     .from("articles")
-//     .where({ article_id })
-//     .then((row) => {
-//       return
-//     });
-// };
