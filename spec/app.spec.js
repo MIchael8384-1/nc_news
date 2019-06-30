@@ -141,6 +141,14 @@ describe("/api", () => {
           expect(res.body.msg).to.equal("Method is not allowed");
         });
     });
+    // it("GET status 400  bad request, sort_by column name does not exist", () => {
+    //   return request(app)
+    //     .get("/api/articles?sort_by=notAValidColumn")
+    //     .expect(400)
+    //     .then(res => {
+    //       expect(res.body.msg).to.equal("Not found");
+    //     });
+    // });
 
     describe("/:article_id", () => {
       it("GET 200, responds with the requested article using article_id", () => {
@@ -169,7 +177,7 @@ describe("/api", () => {
           .expect(400)
           .then(res => {
             console.log(res.body);
-            expect(res.body.msg).to.equal("Invalid User ID");
+            expect(res.body.msg).to.equal("Invalid ID");
           });
       });
       it("GET for no existent article - status 404 item not found", () => {
