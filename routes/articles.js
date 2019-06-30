@@ -2,7 +2,8 @@ const articlesRouter = require("express").Router();
 const {
   getArticles,
   getArticleById,
-  getArticleComments
+  getArticleComments,
+  postArticleComments
 } = require("../controllers/articles");
 
 articlesRouter
@@ -22,6 +23,7 @@ articlesRouter
 articlesRouter
   .route("/:article_id/comments")
   .get(getArticleComments)
+  .post(postArticleComments)
   .all((req, res) => {
     res.status(405).send({ msg: "Method is not allowed" });
   });
