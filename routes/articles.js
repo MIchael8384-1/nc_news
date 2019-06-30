@@ -2,9 +2,9 @@ const articlesRouter = require("express").Router();
 const {
   getArticles,
   getArticleById,
-  getArticleComments,
-  postArticleComments
+  getArticleComments
 } = require("../controllers/articles");
+const { insertNewComment } = require("../controllers/comments");
 
 articlesRouter
   .route("/")
@@ -23,7 +23,7 @@ articlesRouter
 articlesRouter
   .route("/:article_id/comments")
   .get(getArticleComments)
-  .post(postArticleComments)
+  .post(insertNewComment)
   .all((req, res) => {
     res.status(405).send({ msg: "Method is not allowed" });
   });

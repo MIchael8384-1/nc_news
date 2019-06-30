@@ -13,3 +13,10 @@ exports.removeCommentById = comment_id => {
       }
     });
 };
+
+exports.addComment = ({ author, body, article_id }) => {
+  return connection
+    .into("comments")
+    .insert({ author, body, article_id })
+    .returning("author", "body");
+};

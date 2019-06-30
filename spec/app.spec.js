@@ -170,6 +170,17 @@ describe("/api", () => {
             expect(res.body.article.article_id).to.equal(1);
           });
       });
+      it("POST 201, posts a new comment by article ID", () => {
+        const newComment = { author: "butter_bridge", body: "hello world" };
+        return request(app)
+          .post("/api/articles/1/comments")
+          .send(newComment)
+          .expect(201)
+          .then(res => {
+            console.log(res);
+            expect(res.body.comment.author).to.equal("butter_bridge");
+          });
+      });
 
       it("GET for an invalid article_id - status 400 Bad Request with error message", () => {
         return request(app)
