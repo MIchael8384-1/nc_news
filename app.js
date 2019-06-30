@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const apiRouter = require("./routes/api");
+const { handling400, handling404, handling500 } = require("./errors/index");
 
 app.use(express.json());
 
@@ -9,26 +10,11 @@ app.use(express.json());
 // });
 app.use("/api", apiRouter);
 
-app.use((err, req, res, next) => {
-  const sqlErrorCodes = { "22P02": "Invalid User ID" };
+app.use(handling400);
 
-  if (sqlErrorCodes[err.code]) {
-    res.status(400).send({ msg: sqlErrorCodes[err.code] });
-  } else next(err);
-});
+app.use(handling404);
 
-app.use((err, req, res, next) => {
-  const codes = {
-    404: "Not Found"
-  };
-  res.status(404).send({ msg: codes[err.code] });
-
-  next(err);
-});
-
-app.use((err, req, res, next) => {
-  res.status(500).send({ msg: "You have an Internal server " });
-});
+app.use(handling500);
 
 app.all("/*", (req, res, next) => res.status(400).send("Route not found"));
 module.exports = app;
