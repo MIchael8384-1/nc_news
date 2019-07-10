@@ -7,6 +7,9 @@ const {
 commentsRouter
   .route("/:comment_id")
   .delete(deleteCommentById)
-  .patch(patchCommentById);
+  .patch(patchCommentById)
+  .all((req, res) => {
+    res.status(405).send({ msg: "Method is not allowed" });
+  });
 
 module.exports = commentsRouter;

@@ -11,7 +11,7 @@ exports.fetchArticles = ({ sort_by, author, topic, order }) => {
       "articles.votes"
     )
     .from("articles")
-    .count({ comments_count: "comment_id" })
+    .count({ comment_count: "comment_id" })
     .leftJoin("comments", "articles.article_id", "comments.article_id")
     .groupBy("articles.article_id")
     .orderBy(sort_by || "created_at", order || "desc")
@@ -23,9 +23,13 @@ exports.fetchArticles = ({ sort_by, author, topic, order }) => {
         query.where("articles.topic", topic);
       }
     })
-    .then(article => {
-      if (!article) return Promise.reject({});
-      return article;
+    .then(articles => {
+      if (!articles[0]) {
+        return Promise.reject({
+          code: 404
+        });
+      }
+      return articles;
     });
 };
 
@@ -34,7 +38,7 @@ exports.fetchArticleById = article_id => {
     .select("articles.*")
     .from("articles")
     .where({ "articles.article_id": article_id })
-    .count({ comments_count: "comment_id" })
+    .count({ comment_count: "comment_id" })
     .leftJoin("comments", "articles.article_id", "comments.article_id")
     .groupBy("articles.article_id")
 
@@ -48,16 +52,12 @@ exports.fetchArticleById = article_id => {
     });
 };
 
-exports.fetchArticleComments = (
-  article_id,
-  sort_by = "created_at",
-  order = "DESC"
-) => {
+exports.fetchArticleComments = (article_id, sort_by, order) => {
   return connection
     .select("*")
     .from("comments")
     .where({ article_id })
-    .orderBy(sort_by, order)
+    .orderBy(sort_by || "created_at", order || "desc")
     .returning("*");
 };
 
@@ -66,9 +66,8 @@ exports.updateArticleVotes = (article_id, inc_votes) => {
     .from("articles")
     .where({ article_id })
     .increment("votes", inc_votes)
-    .returning("*");
-  // .then(article => {
-  //   console.log(article);
-  //   return article;
-  // });
+    .returning("*")
+    .then(([article]) => {
+      return article;
+    });
 };

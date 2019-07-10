@@ -16,7 +16,7 @@ app.use(handling404);
 
 app.use(handling500);
 
-app.all("/*", (req, res, next) => res.status(400).send("Route not found"));
+app.all("/*", (req, res, next) => res.status(404).send("Route not found"));
 module.exports = app;
 
 // app.use((err, req, res, next) => {

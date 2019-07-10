@@ -85,7 +85,7 @@ describe("/api", () => {
             "topic",
             "created_at",
             "votes",
-            "comments_count"
+            "comment_count"
           );
         });
     });
@@ -132,6 +132,22 @@ describe("/api", () => {
           expect(res.body.articles[0].topic).to.equal("mitch");
         });
     });
+    // it("GET 404 status, respond with not found when invalid topic is given ", () => {
+    //   return request(app)
+    //     .get("/api/articles?topic=not-a-topic")
+    //     .expect(404)
+    //     .then(res => {
+    //       expect(res.body.msg).to.equal("Not Found");
+    //     });
+    // });
+    // it("GET 404 Status, responds with an invalid message whe author is not found", () => {
+    //   return request(app)
+    //     .get("/api/articles?author=not-an-author")
+    //     .expect(404)
+    //     .then(res => {
+    //       expect(res.body.msg).to.equal("Not Found");
+    //     });
+    // });
 
     it("PUT/DELETE 405, will respond with an invalid method message", () => {
       return request(app)
@@ -141,14 +157,14 @@ describe("/api", () => {
           expect(res.body.msg).to.equal("Method is not allowed");
         });
     });
-    // it("GET status 400  bad request, sort_by column name does not exist", () => {
-    //   return request(app)
-    //     .get("/api/articles?sort_by=notAValidColumn")
-    //     .expect(400)
-    //     .then(res => {
-    //       expect(res.body.msg).to.equal("Not found");
-    //     });
-    // });
+    it("GET status 400 bad request, sort_by column name does not exist", () => {
+      return request(app)
+        .get("/api/articles?sort_by=not-a-column")
+        .expect(400)
+        .then(res => {
+          expect(res.body.msg).to.equal("Invalid query");
+        });
+    });
 
     describe("/:article_id", () => {
       it("GET 200, responds with the requested article using article_id", () => {
@@ -165,20 +181,20 @@ describe("/api", () => {
               "body",
               "created_at",
               "votes",
-              "comments_count"
+              "comment_count"
             );
             expect(res.body.article.article_id).to.equal(1);
           });
       });
       it("POST 201, posts a new comment by article ID", () => {
-        const newComment = { author: "butter_bridge", body: "hello world" };
+        const newComment = { username: "butter_bridge", body: "hello world" };
         return request(app)
           .post("/api/articles/1/comments")
           .send(newComment)
           .expect(201)
           .then(res => {
-            expect(res.body.comment[0].author).to.equal("butter_bridge");
-            expect(res.body.comment[0].comment_id).to.equal(19);
+            expect(res.body.comment.author).to.equal("butter_bridge");
+            expect(res.body.comment.comment_id).to.equal(19);
           });
       });
 
@@ -187,7 +203,6 @@ describe("/api", () => {
           .get("/api/articles/notAnId")
           .expect(400)
           .then(res => {
-            console.log(res.body);
             expect(res.body.msg).to.equal("Invalid ID");
           });
       });
@@ -206,7 +221,8 @@ describe("/api", () => {
           .send({ inc_votes: vote })
           .expect(200)
           .then(res => {
-            expect(res.body.article[0].votes).to.equal(101);
+            console.log(res.body.article);
+            expect(res.body.article.votes).to.equal(101);
           });
       });
       it("PATCH 200, decrements the current article vote count ", () => {
@@ -216,23 +232,22 @@ describe("/api", () => {
           .send({ inc_votes: vote })
           .expect(200)
           .then(res => {
-            expect(res.body.article[0].votes).to.equal(0);
+            expect(res.body.article.votes).to.equal(0);
           });
       });
 
-      describe("/comments", () => {
+      describe.only("/comments", () => {
         it("GET Status 200, respond with an array of comments when given an article_id", () => {
           return request(app)
             .get("/api/articles/1/comments")
             .expect(200)
             .then(res => {
-              //console.log(res.body.comments);
-
               expect(res.body.comments).to.be.an("array");
               expect(res.body.comments[0].article_id).to.equal(1);
             });
         });
-        it("GET Status 200, array of comments sorted in descending order by created_at  ", () => {
+
+        it("GET 200 status, responds with an array of articles in descending and sort_by date as default", () => {
           return request(app)
             .get("/api/articles/1/comments")
             .expect(200)
@@ -241,6 +256,49 @@ describe("/api", () => {
                 res.body.comments[1].created_at >=
                   res.body.comments[2].created_at
               ).to.be.true;
+            });
+        });
+        it("GET Status 200, responds with objects sorted by votes ", () => {
+          return request(app)
+            .get("/api/articles/1/comments?sort_by=votes")
+            .expect(200)
+            .then(res => {
+              console.log(res.body.comments);
+              expect(res.body.comments).to.be.sorted("votes");
+            });
+        });
+        it("GET Status 200, array of comments sorted in ascending order ", () => {
+          return request(app)
+            .get("/api/articles/1/comments?order=asc")
+            .expect(200)
+            .then(res => {
+              console.log(res.body.comments);
+              expect(
+                res.body.comments[1].created_at >
+                  res.body.comments[2].created_at
+              ).to.be.true;
+            });
+        });
+        it("POST 400, Bad Request with error message", () => {
+          return request(app)
+            .post("/api/articles/1/comments")
+            .send()
+            .expect(400)
+            .then(res => {
+              expect(res.body.msg).to.eql("Bad Request");
+            });
+        });
+        it.only("POST 404, valid article ID does not exist ", () => {
+          return request(app)
+            .post("/api/articles/1000/comments")
+            .send({
+              username: "butter_bridge",
+              body:
+                "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky."
+            })
+            .expect(400)
+            .then(res => {
+              expect(res.body.msg).to.eql("Not Found");
             });
         });
       });
@@ -269,8 +327,16 @@ describe("/api", () => {
         .send({ inc_votes: vote })
         .expect(200)
         .then(res => {
-          console.log(res.body);
-          expect(res.body.comment[0].votes).to.equal(17);
+          expect(res.body.comment.votes).to.equal(17);
+        });
+    });
+    it("PATCH 404, not found when PATCH contains invalid comment_id", () => {
+      return request(app)
+        .patch("/api/comments/1000")
+        .send()
+        .expect(404)
+        .then(res => {
+          expect(res.body.msg).to.equal("Not Found");
         });
     });
   });

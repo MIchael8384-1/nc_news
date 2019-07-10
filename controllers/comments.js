@@ -14,9 +14,9 @@ exports.deleteCommentById = (req, res, next) => {
 };
 
 exports.insertNewComment = (req, res, next) => {
-  const { author, body } = req.body;
+  const { username, body } = req.body;
   const { article_id } = req.params;
-  const newComment = { author, body, article_id };
+  const newComment = { author: username, body, article_id };
   addComment(newComment)
     .then(comment => {
       res.status(201).send({ comment });

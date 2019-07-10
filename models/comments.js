@@ -18,7 +18,15 @@ exports.addComment = ({ author, body, article_id }) => {
   return connection
     .into("comments")
     .insert({ author, body, article_id })
-    .returning("*");
+    .returning("*")
+    .then(([comment]) => {
+      if (!comment) {
+        return Promise.reject({
+          code: 400
+        });
+      }
+      return comment;
+    });
 };
 
 exports.updateCommentsVote = (comment_id, inc_votes) => {
@@ -26,5 +34,13 @@ exports.updateCommentsVote = (comment_id, inc_votes) => {
     .from("comments")
     .where({ comment_id })
     .increment("votes", inc_votes)
-    .returning("*");
+    .returning("*")
+    .then(([updateVote]) => {
+      if (!updateVote) {
+        return Promise.reject({
+          code: 404
+        });
+      }
+      return updateVote;
+    });
 };
