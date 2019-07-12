@@ -4,9 +4,6 @@ const usersRouter = require("./users");
 const articlesRouter = require("./articles");
 const commentsRouter = require("./comments");
 
-// apiRouter.use("/", (req, res, next) => {
-//   console.log("api Router");
-// });
 apiRouter.route("/").all((req, res) => {
   res.status(405).send({ msg: "Method is not allowed" });
 });

@@ -8,4 +8,3 @@ exports.getUserByUsername = (req, res, next) => {
     })
     .catch(next);
 };
-//res.status(200).send({ user });

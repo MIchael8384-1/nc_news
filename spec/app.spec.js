@@ -34,7 +34,6 @@ describe("/api", () => {
         .delete("/api/topics")
         .expect(405)
         .then(res => {
-          console.log(res.body.msg);
           expect(res.body.msg).to.equal("Method is not allowed");
         });
     });
@@ -138,7 +137,6 @@ describe("/api", () => {
         .get("/api/articles?topic=not-a-topic")
         .expect(404)
         .then(res => {
-          console.log(res.body.msg);
           expect(res.body.msg).to.equal("Not Found");
         });
     });
@@ -300,7 +298,6 @@ describe("/api", () => {
               expect(res.body.msg).to.eql("Bad Request");
             });
         });
-        //ERROR MESSAGE ISSUE - TRYING TO GET A 404 RATHER THEN 400
         it("POST 422, invalid article ID does not exist ", () => {
           return request(app)
             .post("/api/articles/1000/comments")
