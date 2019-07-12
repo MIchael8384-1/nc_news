@@ -132,22 +132,25 @@ describe("/api", () => {
           expect(res.body.articles[0].topic).to.equal("mitch");
         });
     });
-    // it("GET 404 status, respond with not found when invalid topic is given ", () => {
-    //   return request(app)
-    //     .get("/api/articles?topic=not-a-topic")
-    //     .expect(404)
-    //     .then(res => {
-    //       expect(res.body.msg).to.equal("Not Found");
-    //     });
-    // });
-    // it("GET 404 Status, responds with an invalid message whe author is not found", () => {
-    //   return request(app)
-    //     .get("/api/articles?author=not-an-author")
-    //     .expect(404)
-    //     .then(res => {
-    //       expect(res.body.msg).to.equal("Not Found");
-    //     });
-    // });
+
+    it("GET 404 status, responds with not found as topic does not exist", () => {
+      return request(app)
+        .get("/api/articles?topic=not-a-topic")
+        .expect(404)
+        .then(res => {
+          console.log(res.body.msg);
+          expect(res.body.msg).to.equal("Not Found");
+        });
+    });
+
+    it("GET 404 Status, responds with an invalid message whe author is not found", () => {
+      return request(app)
+        .get("/api/articles?author=not-an-author")
+        .expect(404)
+        .then(res => {
+          expect(res.body.msg).to.equal("Not Found");
+        });
+    });
 
     it("PUT/DELETE 405, will respond with an invalid method message", () => {
       return request(app)
@@ -172,7 +175,6 @@ describe("/api", () => {
           .get("/api/articles/1")
           .expect(200)
           .then(res => {
-            console.log(res.body);
             expect(res.body.article).to.contain.keys(
               "article_id",
               "title",
@@ -195,6 +197,19 @@ describe("/api", () => {
           .then(res => {
             expect(res.body.comment.author).to.equal("butter_bridge");
             expect(res.body.comment.comment_id).to.equal(19);
+          });
+      });
+      it("POST 201, post new comment by article_id with a successful POST message", () => {
+        const newComment = {
+          username: "butter_bridge",
+          body: "This is a successful post"
+        };
+        return request(app)
+          .post("/api/articles/1/comments")
+          .send(newComment)
+          .expect(201)
+          .then(res => {
+            expect(res.body.msg).to.equal("Successful Post");
           });
       });
 
@@ -221,7 +236,6 @@ describe("/api", () => {
           .send({ inc_votes: vote })
           .expect(200)
           .then(res => {
-            console.log(res.body.article);
             expect(res.body.article.votes).to.equal(101);
           });
       });
@@ -236,7 +250,7 @@ describe("/api", () => {
           });
       });
 
-      describe.only("/comments", () => {
+      describe("/comments", () => {
         it("GET Status 200, respond with an array of comments when given an article_id", () => {
           return request(app)
             .get("/api/articles/1/comments")
@@ -263,7 +277,6 @@ describe("/api", () => {
             .get("/api/articles/1/comments?sort_by=votes")
             .expect(200)
             .then(res => {
-              console.log(res.body.comments);
               expect(res.body.comments).to.be.sorted("votes");
             });
         });
@@ -272,7 +285,6 @@ describe("/api", () => {
             .get("/api/articles/1/comments?order=asc")
             .expect(200)
             .then(res => {
-              console.log(res.body.comments);
               expect(
                 res.body.comments[1].created_at >
                   res.body.comments[2].created_at
@@ -288,7 +300,8 @@ describe("/api", () => {
               expect(res.body.msg).to.eql("Bad Request");
             });
         });
-        it.only("POST 404, valid article ID does not exist ", () => {
+        //ERROR MESSAGE ISSUE - TRYING TO GET A 404 RATHER THEN 400
+        it("POST 422, invalid article ID does not exist ", () => {
           return request(app)
             .post("/api/articles/1000/comments")
             .send({
@@ -296,9 +309,9 @@ describe("/api", () => {
               body:
                 "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky."
             })
-            .expect(400)
+            .expect(422)
             .then(res => {
-              expect(res.body.msg).to.eql("Not Found");
+              expect(res.body.msg).to.eql("Does Not Exist");
             });
         });
       });

@@ -19,7 +19,7 @@ exports.insertNewComment = (req, res, next) => {
   const newComment = { author: username, body, article_id };
   addComment(newComment)
     .then(comment => {
-      res.status(201).send({ comment });
+      res.status(201).send({ msg: "Successful Post", comment });
     })
     .catch(next);
 };
