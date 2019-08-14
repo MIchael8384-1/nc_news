@@ -5,7 +5,7 @@ const articlesRouter = require("./articles");
 const commentsRouter = require("./comments");
 
 apiRouter.route("/").all((req, res) => {
-  res.status(405).send({ msg: "Method is not allowed" });
+  res.status(405).send({ msg: "Path Not Found" });
 });
 apiRouter.use("/topics", topicsRouter);
 apiRouter.use("/users", usersRouter);
