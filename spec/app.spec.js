@@ -25,6 +25,7 @@ describe("/api", () => {
         .get("/api/topics")
         .expect(200)
         .then(res => {
+          console.log(res.body.topics);
           expect(res.body.topics).to.be.an("array");
           expect(res.body.topics[0]).to.contain.keys("slug", "description");
         });
@@ -76,6 +77,7 @@ describe("/api", () => {
         .get("/api/articles")
         .expect(200)
         .then(res => {
+          console.log(res.body);
           expect(res.body.articles).to.be.an("array");
           expect(res.body.articles[1]).to.contain.keys(
             "author",
@@ -254,6 +256,7 @@ describe("/api", () => {
             .get("/api/articles/1/comments")
             .expect(200)
             .then(res => {
+              console.log(res.body.comments);
               expect(res.body.comments).to.be.an("array");
               expect(res.body.comments[0].article_id).to.equal(1);
             });
