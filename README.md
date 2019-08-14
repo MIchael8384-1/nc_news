@@ -88,7 +88,7 @@ $ npm run seed
 
 ### **Author** 
 
-Michael Lynch SMith 
+Michael Lynch Smith 
 
 
 
