@@ -86,6 +86,22 @@ $ npm run seed
 ```
 ---
 
+### **Project Links**
+
+Front-End:
+
+- [Netlify - NCNews Round](https://ncnewsfend-michaells.netlify.com/)
+- [Git repository](https://github.com/MIchael8384-1/ncnews-FEND)
+
+Back-end:
+
+- [Heroku - ncnew ](https://backend-ncnews.herokuapp.com/api)
+- [Git repository](https://github.com/MIchael8384-1/nc_news)
+
+---
+
+
+
 ### **Author** 
 
 Michael Lynch Smith 
